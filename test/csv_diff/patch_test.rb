@@ -22,6 +22,8 @@ class PatchTest < MiniTest::Unit::TestCase
   def test_processes_header_lines_correctly
     @patch.header_line('ID,Name,B')
 
+    assert_equal ['ID', 'Name', 'B'], @patch.column_metadata[:columns]
+
     @output_stream.rewind
     assert_equal true, @output_stream.eof?, 'Header line should not write to output stream'
 
@@ -89,6 +91,44 @@ class PatchTest < MiniTest::Unit::TestCase
     assert_equal "5,a5,c5\n", @output_stream.gets
     assert_equal "4,a4,,b4\n", @output_stream.gets
     assert_equal nil, @output_stream.gets
+  end
+
+  def test_keeps_track_of_empty_columns_in_the_column_metadata
+    @patch.header_line('A,B,C,D')
+
+    assert_equal [0, 1, 2, 3], @patch.column_metadata[:empty_columns], 'All columns initially empty'
+
+    @patch.replace_line 'a,,,'
+
+    assert_equal [1, 2, 3], @patch.column_metadata[:empty_columns], 'After adding data in the first column'
+
+    @patch.replace_line ',,c,'
+
+    assert_equal [1, 3], @patch.column_metadata[:empty_columns], 'After reading boolean data in the third column'
+
+    @patch.replace_line ',b,,d'
+
+    assert_equal [], @patch.column_metadata[:empty_columns], 'After reading data into columns 2 and 4'
+  end
+
+  def test_accounts_for_booleans_appropriately_when_determining_empty_columns
+    changes = { '1' => { 'ID' => 1, 'A' => true, 'C' => false }}
+    patch = CsvDiff::Patch.new(changes, @output_stream)
+
+    patch.header_line('ID,A,B,C')
+
+    patch.replace_line('2,,false,')
+
+    assert_equal [1, 3], patch.column_metadata[:empty_columns], 'After processing unchanged line'
+
+    patch.replace_line('1,')
+
+    assert_equal [], patch.column_metadata[:empty_columns], 'After processing a change with booleans'
+
+    @output_stream.rewind
+    assert_equal "2,,false,\n", @output_stream.gets
+    assert_equal "1,true,,false\n", @output_stream.gets
+    assert_equal true, @output_stream.eof?
   end
 
 end

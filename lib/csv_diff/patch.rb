@@ -3,14 +3,18 @@ require 'csv'
 module CsvDiff
   class Patch
 
+    EMPTY_LINE = "\n"
+
     def initialize changes, output_stream
       @output_stream  = output_stream
       @changes        = changes
-      @columns        = []
+
+      header_line(EMPTY_LINE)
     end
 
     def header_line line
       @columns = csv_values(line)
+      mark_all_columns_empty
     end
 
     def replace_line line
@@ -23,7 +27,15 @@ module CsvDiff
       end
     end
 
+    def column_metadata
+      { columns: @columns, empty_columns: @empty_columns }
+    end
+
     private
+
+    def mark_all_columns_empty
+      @empty_columns = (0..@columns.size - 1).to_a
+    end
 
     def emit line
       return if line.nil?
@@ -56,7 +68,13 @@ module CsvDiff
     end
 
     def csv_line values
+      remove_colums_with_data_from_empty_columns(values)
+
       CSV.generate_line(values)
+    end
+
+    def remove_colums_with_data_from_empty_columns values
+      @empty_columns.select! { |column| values[column].nil? }
     end
 
     def change_for row
