@@ -1,7 +1,7 @@
 require 'csv'
 
 module CsvDiff
-  class Patch
+  class Revision
 
     EMPTY_LINE = "\n"
 
