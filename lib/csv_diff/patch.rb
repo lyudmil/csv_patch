@@ -10,7 +10,7 @@ module CsvDiff
     end
 
     def header_line line
-      CSV.parse(line) { |columns| @columns = columns }
+      @columns = csv_values(line)
     end
 
     def replace_line line
