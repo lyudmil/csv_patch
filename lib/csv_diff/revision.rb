@@ -1,7 +1,5 @@
-require 'csv'
-
 module CsvDiff
-  class Revision
+  class Revision < Operation
 
     EMPTY_LINE = "\n"
 
@@ -47,7 +45,7 @@ module CsvDiff
     end
 
     def replacement_line_for row
-      return csv_line(row) unless changed?(row)
+      return create_output_line_from(row) unless changed?(row)
       generate_new_row change_for(row)
     end
 
@@ -60,17 +58,12 @@ module CsvDiff
 
     def line_for change
       values = @columns.collect { |column| change[column] }
-      csv_line(values)
+      create_output_line_from(values)
     end
 
-    def csv_values line_of_csv
-      CSV.parse_line(line_of_csv)
-    end
-
-    def csv_line values
+    def create_output_line_from values
       remove_colums_with_data_from_empty_columns(values)
-
-      CSV.generate_line(values)
+      csv_line(values)
     end
 
     def remove_colums_with_data_from_empty_columns values

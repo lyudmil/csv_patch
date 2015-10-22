@@ -1,5 +1,4 @@
 require 'test_helper'
-require 'csv_diff/revision'
 
 class RevisionTest < MiniTest::Unit::TestCase
 
