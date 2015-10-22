@@ -19,6 +19,19 @@ class PatchTest < MiniTest::Unit::TestCase
     @output_stream.close
   end
 
+  def test_processes_header_lines_correctly
+    @patch.header_line('ID,Name,B')
+
+    @output_stream.rewind
+    assert_equal true, @output_stream.eof?, 'Header line should not write to output stream'
+
+    @patch.replace_line('4,,,')
+
+    @output_stream.rewind
+    assert_equal "4,,b4,a4\n", @output_stream.gets, 'Header line should have changed the schema'
+    assert_equal true, @output_stream.eof?
+  end
+
   def test_leaves_unaffected_lines_as_they_are
     @patch.replace_line('1,a1,b1')
 

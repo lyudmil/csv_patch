@@ -9,10 +9,12 @@ module CsvDiff
       @columns        = []
     end
 
+    def header_line line
+      CSV.parse(line) { |columns| @columns = columns }
+    end
+
     def replace_line line
-      CSV.parse(line) do |row|
-        emit replacement_line_for(row)
-      end
+      emit replacement_line_for csv_values(line)
     end
 
     def add_new_lines
@@ -47,6 +49,10 @@ module CsvDiff
     def line_for change
       values = @columns.collect { |column| change[column] }
       csv_line(values)
+    end
+
+    def csv_values line_of_csv
+      CSV.parse_line(line_of_csv)
     end
 
     def csv_line values
