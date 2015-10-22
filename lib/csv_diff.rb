@@ -1,4 +1,9 @@
-require 'csv'
-require 'csv_diff/operation'
-require 'csv_diff/revision'
-require 'csv_diff/compression'
+require 'csv_diff/patch'
+
+module CsvDiff
+
+  def self.patch options
+    Patch.new(options).apply
+  end
+
+end

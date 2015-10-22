@@ -1,3 +1,5 @@
+require 'csv_diff/operation'
+
 module CsvDiff
   class Revision < Operation
 
