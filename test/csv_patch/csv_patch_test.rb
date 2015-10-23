@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CsvDiffTest < MiniTest::Unit::TestCase
+class CsvPatchTest < MiniTest::Unit::TestCase
 
   def setup
     @original = StringIO.new
@@ -20,7 +20,7 @@ class CsvDiffTest < MiniTest::Unit::TestCase
 
   def test_patches_correctly_when_rows_change
     changes = { '1' => { 'ID' => 1, 'A' => 'a1', 'B' => 'B1!', 'D' => 'd1' }}
-    CsvDiff.patch input: @original, output: @result, changes: changes
+    CsvPatch.patch input: @original, output: @result, changes: changes
 
     @result.rewind
     assert_equal "ID,A,B,D,E,F\n", @result.gets
@@ -33,7 +33,7 @@ class CsvDiffTest < MiniTest::Unit::TestCase
 
   def test_patches_correctly_when_adding_rows
     changes = { '4' => { 'ID' => 4 }}
-    CsvDiff.patch input: @original, output: @result, changes: changes
+    CsvPatch.patch input: @original, output: @result, changes: changes
 
     @result.rewind
     assert_equal "ID,A,B,D,E,F\n", @result.gets
@@ -47,7 +47,7 @@ class CsvDiffTest < MiniTest::Unit::TestCase
 
   def test_patches_correctly_when_deleting_rows
     changes = { '1' => nil, '3' => nil }
-    CsvDiff.patch input: @original, output: @result, changes: changes
+    CsvPatch.patch input: @original, output: @result, changes: changes
     @result.rewind
 
     assert_equal "ID,B,E\n", @result.gets

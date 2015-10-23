@@ -19,7 +19,7 @@ class CompressionTest < MiniTest::Unit::TestCase
     @input_stream.rewind
 
     column_metadata = { columns: ['A', 'B', 'C', 'D', 'E', 'F'], empty_columns: [2, 4] }
-    @compression = CsvDiff::Compression.new(@input_stream, @output_stream, column_metadata)
+    @compression = CsvPatch::Compression.new(@input_stream, @output_stream, column_metadata)
 
     @compression.execute
 

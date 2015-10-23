@@ -11,7 +11,7 @@ class RevisionTest < MiniTest::Unit::TestCase
 
     @output_stream = StringIO.new
 
-    @revision = CsvDiff::Revision.new(@changes, @output_stream)
+    @revision = CsvPatch::Revision.new(@changes, @output_stream)
   end
 
   def teardown
@@ -64,7 +64,7 @@ class RevisionTest < MiniTest::Unit::TestCase
   end
 
   def test_parses_csv_lines_correctly
-    revision = CsvDiff::Revision.new({ '"Smith'  => { 'a' => 1, 'b' => 2 }}, @output_stream)
+    revision = CsvPatch::Revision.new({ '"Smith'  => { 'a' => 1, 'b' => 2 }}, @output_stream)
 
     revision.replace_line('"Smith, John",,')
 
@@ -112,7 +112,7 @@ class RevisionTest < MiniTest::Unit::TestCase
 
   def test_accounts_for_booleans_appropriately_when_determining_empty_columns
     changes = { '1' => { 'ID' => 1, 'A' => true, 'C' => false }}
-    revision = CsvDiff::Revision.new(changes, @output_stream)
+    revision = CsvPatch::Revision.new(changes, @output_stream)
 
     revision.header_line('ID,A,B,C')
 

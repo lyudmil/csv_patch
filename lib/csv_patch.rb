@@ -1,6 +1,6 @@
-require 'csv_diff/patch'
+require 'csv_patch/patch'
 
-module CsvDiff
+module CsvPatch
 
   def self.patch options
     Patch.new(options).apply

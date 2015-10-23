@@ -1,8 +1,8 @@
 require 'tempfile'
-require 'csv_diff/revision'
-require 'csv_diff/compression'
+require 'csv_patch/revision'
+require 'csv_patch/compression'
 
-module CsvDiff
+module CsvPatch
 
   class Patch
 

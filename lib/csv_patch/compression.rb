@@ -1,6 +1,6 @@
-require 'csv_diff/operation'
+require 'csv_patch/operation'
 
-module CsvDiff
+module CsvPatch
 
   class Compression < Operation
 

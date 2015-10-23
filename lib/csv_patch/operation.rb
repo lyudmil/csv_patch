@@ -1,6 +1,6 @@
 require 'csv'
 
-module CsvDiff
+module CsvPatch
   class Operation
 
     def csv_values line_of_csv
