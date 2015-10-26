@@ -3,7 +3,7 @@ require 'json'
 class StreamBatch
 
   def initialize stream, batch_size
-    @stream = stream
+    @stream     = stream
     @batch_size = batch_size
   end
 
@@ -14,19 +14,19 @@ class StreamBatch
   private
 
   def next_batch
-    change_batch = {}
+    batch = {}
 
-    change_batch.merge! next_change until batch_full?(change_batch)
+    batch.merge!(next_change) until batch_full?(batch)
 
-    change_batch
+    batch
   end
 
   def next_change
     JSON.parse(@stream.gets)
   end
 
-  def batch_full? change_batch
-    change_batch.keys.size >= @batch_size || stream_end?
+  def batch_full? batch
+    batch.size >= @batch_size || stream_end?
   end
 
   def stream_end?
