@@ -24,7 +24,8 @@ Gem::Specification.new do |s|
     "lib/csv_patch/compression.rb",
     "lib/csv_patch/operation.rb",
     "lib/csv_patch/patch.rb",
-    "lib/csv_patch/revision.rb"
+    "lib/csv_patch/revision.rb",
+    "lib/csv_patch/stream_batch.rb"
   ]
   s.rubygems_version = "2.2.2"
   s.summary = "Apply diffs to a CSV file"
@@ -34,14 +35,14 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<jeweler>, [">= 0"])
-      s.add_runtime_dependency(%q<flexmock>, [">= 0"])
+      s.add_runtime_dependency(%q<mocha>, [">= 0"])
     else
       s.add_dependency(%q<jeweler>, [">= 0"])
-      s.add_dependency(%q<flexmock>, [">= 0"])
+      s.add_dependency(%q<mocha>, [">= 0"])
     end
   else
     s.add_dependency(%q<jeweler>, [">= 0"])
-    s.add_dependency(%q<flexmock>, [">= 0"])
+    s.add_dependency(%q<mocha>, [">= 0"])
   end
 end
 
