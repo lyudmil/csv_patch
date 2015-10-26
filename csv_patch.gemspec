@@ -11,14 +11,20 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Lyudmil"]
-  s.date = "2015-10-23"
+  s.date = "2015-10-26"
   s.description = "Applies a list of changes in a given format to a CSV file"
   s.email = "lyudmilangelov@gmail.com"
   s.files = [
     "Gemfile",
     "Gemfile.lock",
     "Rakefile",
-    "VERSION"
+    "VERSION",
+    "csv_patch.gemspec",
+    "lib/csv_patch.rb",
+    "lib/csv_patch/compression.rb",
+    "lib/csv_patch/operation.rb",
+    "lib/csv_patch/patch.rb",
+    "lib/csv_patch/revision.rb"
   ]
   s.rubygems_version = "2.2.2"
   s.summary = "Apply diffs to a CSV file"
