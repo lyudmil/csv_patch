@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CsvPatchTest < MiniTest::Unit::TestCase
+class PatchTest < MiniTest::Unit::TestCase
 
   def setup
     @original = StringIO.new
@@ -20,7 +20,9 @@ class CsvPatchTest < MiniTest::Unit::TestCase
 
   def test_patches_correctly_when_rows_change
     changes = { '1' => { 'ID' => 1, 'A' => 'a1', 'B' => 'B1!', 'D' => 'd1' }}
-    CsvPatch.patch input: @original, output: @result, changes: changes
+
+    patch = CsvPatch::Patch.new input: @original, output: @result, changes: changes
+    patch.apply
 
     @result.rewind
     assert_equal "ID,A,B,D,E,F\n", @result.gets
@@ -33,7 +35,9 @@ class CsvPatchTest < MiniTest::Unit::TestCase
 
   def test_patches_correctly_when_adding_rows
     changes = { '4' => { 'ID' => 4 }}
-    CsvPatch.patch input: @original, output: @result, changes: changes
+
+    patch = CsvPatch::Patch.new input: @original, output: @result, changes: changes
+    patch.apply
 
     @result.rewind
     assert_equal "ID,A,B,D,E,F\n", @result.gets
@@ -47,9 +51,11 @@ class CsvPatchTest < MiniTest::Unit::TestCase
 
   def test_patches_correctly_when_deleting_rows
     changes = { '1' => nil, '3' => nil }
-    CsvPatch.patch input: @original, output: @result, changes: changes
-    @result.rewind
 
+    patch = CsvPatch::Patch.new input: @original, output: @result, changes: changes
+    patch.apply
+
+    @result.rewind
     assert_equal "ID,B,E\n", @result.gets
     assert_equal "2,b2,e2\n", @result.gets
 
