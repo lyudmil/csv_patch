@@ -33,6 +33,12 @@ class RevisionTest < MiniTest::Unit::TestCase
     assert_equal true, @output_stream.eof?
   end
 
+  def test_processes_blank_header_lines
+    @revision.header_line(nil)
+
+    assert_equal [], @revision.column_metadata[:columns]
+  end
+
   def test_leaves_unaffected_lines_as_they_are
     @revision.replace_line('1,a1,b1')
 
