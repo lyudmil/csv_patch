@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'csv_patch'
+
+options = {}
+
+OptionParser.new do |opts|
+  opts.banner = 'Usage: csv_patch [options]'
+
+  opts.on('-iINPUT_FILE', '--input=INPUT_FILE', 'CSV file to patch (required)') do |input_file|
+    options[:input] = File.new(input_file, 'r')
+  end
+
+  opts.on('-oOUTPUT_FILE', '--output=OUTPUT_FILE', 'File to store the patched version in (required)') do |output_file|
+    options[:output] = File.new(output_file, 'w')
+  end
+
+  opts.on('-cCHANGES_FILE', '--changes=CHANGES_FILE', 'File containing the changes to apply (required)') do |changes_file|
+    options[:changes] = File.new(changes_file, 'r')
+  end
+
+  opts.on('-bBATCH_SIZE', '--batch_size=BATCH_SIZE', 'Number of changes to read before applying a patch') do |batch_size|
+    options[:batch_size] = batch_size.to_i
+  end
+
+end.parse!
+
+print 'Patching... '
+
+CsvPatch.patch(options)
+
+puts 'done'
+
+[:input, :output, :changes].each { |file| options[file].close if options[file] }
