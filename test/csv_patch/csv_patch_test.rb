@@ -43,6 +43,19 @@ class CsvPatchTest < MiniTest::Unit::TestCase
     CsvPatch.patch input: @input, output: @output, changes: @changes, batch_size: 2
   end
 
+  def test_batch_size_defaults_to_500
+    changes = []
+    501.times { |i| changes.push({ i.to_s => nil }) }
+
+    setup_changes_file_with changes
+
+    expect_to_apply_patch_including changes.slice(0, 500)
+    expect_to_apply_patch_including [changes.last]
+
+    @changes.rewind
+    CsvPatch.patch output: @output, input: @input, changes: @changes
+  end
+
   private
 
   def expect_to_apply_patch_including changes
