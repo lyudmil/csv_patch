@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'optparse'
+require 'csv_patch'
 
 options = {}
 
@@ -25,6 +26,10 @@ OptionParser.new do |opts|
 
 end.parse!
 
-puts options
+print 'Patching... '
+
+CsvPatch.patch(options)
+
+puts 'done'
 
 [:input, :output, :changes].each { |file| options[file].close if options[file] }

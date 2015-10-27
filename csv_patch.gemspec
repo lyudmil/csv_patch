@@ -14,11 +14,13 @@ Gem::Specification.new do |s|
   s.date = "2015-10-27"
   s.description = "Applies a list of changes in a given format to a CSV file"
   s.email = "lyudmilangelov@gmail.com"
+  s.executables = ["csv_patch"]
   s.files = [
     "Gemfile",
     "Gemfile.lock",
     "Rakefile",
     "VERSION",
+    "bin/csv_patch",
     "csv_patch.gemspec",
     "lib/csv_patch.rb",
     "lib/csv_patch/compression.rb",
