@@ -11,20 +11,23 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Lyudmil"]
-  s.date = "2015-10-26"
+  s.date = "2015-10-27"
   s.description = "Applies a list of changes in a given format to a CSV file"
   s.email = "lyudmilangelov@gmail.com"
+  s.executables = ["csv_patch"]
   s.files = [
     "Gemfile",
     "Gemfile.lock",
     "Rakefile",
     "VERSION",
+    "bin/csv_patch",
     "csv_patch.gemspec",
     "lib/csv_patch.rb",
     "lib/csv_patch/compression.rb",
     "lib/csv_patch/operation.rb",
     "lib/csv_patch/patch.rb",
-    "lib/csv_patch/revision.rb"
+    "lib/csv_patch/revision.rb",
+    "lib/csv_patch/stream_batch.rb"
   ]
   s.rubygems_version = "2.2.2"
   s.summary = "Apply diffs to a CSV file"
@@ -34,14 +37,14 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<jeweler>, [">= 0"])
-      s.add_runtime_dependency(%q<flexmock>, [">= 0"])
+      s.add_runtime_dependency(%q<mocha>, [">= 0"])
     else
       s.add_dependency(%q<jeweler>, [">= 0"])
-      s.add_dependency(%q<flexmock>, [">= 0"])
+      s.add_dependency(%q<mocha>, [">= 0"])
     end
   else
     s.add_dependency(%q<jeweler>, [">= 0"])
-    s.add_dependency(%q<flexmock>, [">= 0"])
+    s.add_dependency(%q<mocha>, [">= 0"])
   end
 end
 

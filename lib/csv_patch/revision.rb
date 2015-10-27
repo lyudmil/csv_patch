@@ -14,6 +14,8 @@ module CsvPatch
     end
 
     def header_line line
+      return unless line
+
       @columns = csv_values(line)
       mark_all_columns_empty
     end

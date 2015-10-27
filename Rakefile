@@ -11,6 +11,8 @@ Jeweler::Tasks.new do |gem|
   gem.email = 'lyudmilangelov@gmail.com'
   gem.authors = ['Lyudmil']
   gem.files.exclude 'test/**/*', '.*'
+
+  gem.executables = ['csv_patch']
 end
 
 Rake::TestTask.new(:test) do |test|

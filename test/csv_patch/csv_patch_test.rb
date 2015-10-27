@@ -3,57 +3,77 @@ require 'test_helper'
 class CsvPatchTest < MiniTest::Unit::TestCase
 
   def setup
-    @original = StringIO.new
-    @original.puts 'ID,A,B,C,D,E,F'
-    @original.puts '1,a1,b1,,d1'
-    @original.puts '2,,b2,,,e2'
-    @original.puts '3,,,,,,f3'
-    @original.rewind
+    @input    = StringIO.new
+    @output   = StringIO.new
+    @changes  = StringIO.new
 
-    @result = StringIO.new
+    @changes_repository = [
+      { '1' => { 'a' => 1, 'b' => '2' }},
+      { '2' => nil },
+      { '3' => { 'c' => 3, 'd' => '4' }},
+      { '4' => { 'e' => 5 }},
+      { '5' => { 'f' => 6 }},
+      { '6' => nil },
+      { '7' => { 'g' => 7, 'h' => 8 }}
+    ]
   end
 
   def teardown
-    @original.close
-    @result.close
+    [@input, @output, @changes].each { |io| io.close }
   end
 
-  def test_patches_correctly_when_rows_change
-    changes = { '1' => { 'ID' => 1, 'A' => 'a1', 'B' => 'B1!', 'D' => 'd1' }}
-    CsvPatch.patch input: @original, output: @result, changes: changes
+  def test_processes_the_changes_file_in_a_single_batch_if_the_batch_size_is_greater_than_the_number_of_changes
+    setup_changes_file_with @changes_repository.slice(0, 3)
 
-    @result.rewind
-    assert_equal "ID,A,B,D,E,F\n", @result.gets
-    assert_equal "1,a1,B1!,d1,,\n", @result.gets
-    assert_equal "2,,b2,,e2\n", @result.gets
-    assert_equal "3,,,,,f3\n", @result.gets
+    expect_to_apply_patch_including @changes_repository.slice(0, 3)
 
-    assert_equal true, @result.eof?
+    @changes.rewind
+    CsvPatch.patch input: @input, output: @output, changes: @changes, batch_size: 4
   end
 
-  def test_patches_correctly_when_adding_rows
-    changes = { '4' => { 'ID' => 4 }}
-    CsvPatch.patch input: @original, output: @result, changes: changes
+  def test_processes_the_changes_file_in_multiple_batches_if_the_batch_size_is_smaller_than_the_number_of_changes
+    setup_changes_file_with @changes_repository
 
-    @result.rewind
-    assert_equal "ID,A,B,D,E,F\n", @result.gets
-    assert_equal "1,a1,b1,d1\n", @result.gets
-    assert_equal "2,,b2,,e2\n", @result.gets
-    assert_equal "3,,,,,f3\n", @result.gets
-    assert_equal "4,,,,,\n", @result.gets
+    expect_to_apply_patch_including @changes_repository.slice(0, 2)
+    expect_to_apply_patch_including @changes_repository.slice(2, 2)
+    expect_to_apply_patch_including @changes_repository.slice(4, 2)
+    expect_to_apply_patch_including [@changes_repository.last]
 
-    assert_equal true, @result.eof?
+    @changes.rewind
+    CsvPatch.patch input: @input, output: @output, changes: @changes, batch_size: 2
   end
 
-  def test_patches_correctly_when_deleting_rows
-    changes = { '1' => nil, '3' => nil }
-    CsvPatch.patch input: @original, output: @result, changes: changes
-    @result.rewind
+  def test_batch_size_defaults_to_500
+    changes = []
+    501.times { |i| changes.push({ i.to_s => nil }) }
 
-    assert_equal "ID,B,E\n", @result.gets
-    assert_equal "2,b2,e2\n", @result.gets
+    setup_changes_file_with changes
 
-    assert_equal true, @result.eof?
+    expect_to_apply_patch_including changes.slice(0, 500)
+    expect_to_apply_patch_including [changes.last]
+
+    @changes.rewind
+    CsvPatch.patch output: @output, input: @input, changes: @changes
+  end
+
+  private
+
+  def expect_to_apply_patch_including changes
+    patch = mock('patch')
+    patch.expects(:apply)
+
+    CsvPatch::Patch
+      .expects(:new)
+      .with(changes: batch_including(changes), input: @input, output: @output)
+      .returns(patch)
+  end
+
+  def setup_changes_file_with changes
+    changes.each { |change| @changes.puts change.to_json }
+  end
+
+  def batch_including changes
+    changes.inject({}) { |batch, change| batch.merge(change) }
   end
 
 end
