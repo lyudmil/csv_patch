@@ -20,7 +20,7 @@ OptionParser.new do |opts|
     options[:changes] = File.new(changes_file, 'r')
   end
 
-  opts.on('-bBATCH_SIZE', '--batch_size=BATCH_SIZE', 'Number of changes to read before applying a patch') do |batch_size|
+  opts.on('-bBATCH_SIZE', '--batch_size=BATCH_SIZE', 'Number of changes to read before applying a patch. Defaults to 500.') do |batch_size|
     options[:batch_size] = batch_size.to_i
   end
 
