@@ -29,7 +29,7 @@ class RevisionTest < MiniTest::Unit::TestCase
     @revision.replace_line('4,,,')
 
     @output_stream.rewind
-    assert_equal "4,,b4,a4\n", @output_stream.gets, 'Header line should have changed the schema'
+    assert_equal "[4,null,\"b4\",\"a4\"]\n", @output_stream.gets, 'Header line should have changed the schema'
     assert_equal true, @output_stream.eof?
   end
 
@@ -43,14 +43,14 @@ class RevisionTest < MiniTest::Unit::TestCase
     @revision.replace_line('1,a1,b1')
 
     @output_stream.rewind
-    assert_equal "1,a1,b1\n", @output_stream.gets
+    assert_equal "[\"1\",\"a1\",\"b1\"]\n", @output_stream.gets
   end
 
   def test_updates_lines_for_which_there_are_changes
     @revision.replace_line('5,,')
 
     @output_stream.rewind
-    assert_equal "5,a5,c5\n", @output_stream.gets
+    assert_equal "[5,\"a5\",\"c5\"]\n", @output_stream.gets
   end
 
   def test_updates_the_schema_as_it_processes_the_changes
@@ -58,8 +58,8 @@ class RevisionTest < MiniTest::Unit::TestCase
     @revision.replace_line('5,,')
 
     @output_stream.rewind
-    assert_equal "4,a4,b4\n", @output_stream.gets
-    assert_equal "5,a5,,c5\n", @output_stream.gets
+    assert_equal "[4,\"a4\",\"b4\"]\n", @output_stream.gets
+    assert_equal "[5,\"a5\",null,\"c5\"]\n", @output_stream.gets
   end
 
   def test_processes_deletions
@@ -75,16 +75,16 @@ class RevisionTest < MiniTest::Unit::TestCase
     revision.replace_line('"Smith, John",,')
 
     @output_stream.rewind
-    assert_equal "\"Smith, John\",,\n", @output_stream.gets
+    assert_equal "[\"Smith, John\",null,null]\n", @output_stream.gets
   end
 
   def test_can_generate_new_lines
     @revision.add_new_lines
 
     @output_stream.rewind
-    assert_equal "4,a4,b4\n", @output_stream.gets
-    assert_equal "5,a5,,c5\n", @output_stream.gets
-    assert_equal nil, @output_stream.gets
+    assert_equal "[4,\"a4\",\"b4\"]\n", @output_stream.gets
+    assert_equal "[5,\"a5\",null,\"c5\"]\n", @output_stream.gets
+    assert_equal true, @output_stream.eof?
   end
 
   def test_does_not_generate_new_lines_for_applied_changes
@@ -93,9 +93,9 @@ class RevisionTest < MiniTest::Unit::TestCase
     @revision.add_new_lines
 
     @output_stream.rewind
-    assert_equal "5,a5,c5\n", @output_stream.gets
-    assert_equal "4,a4,,b4\n", @output_stream.gets
-    assert_equal nil, @output_stream.gets
+    assert_equal "[5,\"a5\",\"c5\"]\n", @output_stream.gets
+    assert_equal "[4,\"a4\",null,\"b4\"]\n", @output_stream.gets
+    assert_equal true, @output_stream.eof?
   end
 
   def test_keeps_track_of_empty_columns_in_the_column_metadata
@@ -131,8 +131,8 @@ class RevisionTest < MiniTest::Unit::TestCase
     assert_equal [], revision.column_metadata[:empty_columns], 'After processing a change with booleans'
 
     @output_stream.rewind
-    assert_equal "2,,false,\n", @output_stream.gets
-    assert_equal "1,true,,false\n", @output_stream.gets
+    assert_equal "[\"2\",null,\"false\",null]\n", @output_stream.gets
+    assert_equal "[1,true,null,false]\n", @output_stream.gets
     assert_equal true, @output_stream.eof?
   end
 

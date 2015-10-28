@@ -32,7 +32,11 @@ module CsvPatch
     end
 
     def compress line
-      remove_empty_columns_from csv_values(line)
+      remove_empty_columns_from data_in(line)
+    end
+
+    def data_in line
+      JSON.parse(line)
     end
 
     def remove_empty_columns_from row
