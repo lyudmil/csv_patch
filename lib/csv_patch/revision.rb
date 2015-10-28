@@ -68,7 +68,7 @@ module CsvPatch
 
     def create_output_line_from values
       remove_colums_with_data_from_empty_columns(values)
-      csv_line(values)
+      values.to_json
     end
 
     def remove_colums_with_data_from_empty_columns values

@@ -13,9 +13,9 @@ class CompressionTest < MiniTest::Unit::TestCase
   end
 
   def test_removes_empty_columns
-    @input_stream.puts 'a1,b1,,d1'
-    @input_stream.puts 'a2,b2'
-    @input_stream.puts ',,,,,f3'
+    @input_stream.puts ['a1', 'b1', nil, 'd1'].to_json
+    @input_stream.puts ['a2', 'b2'].to_json
+    @input_stream.puts [nil,nil,nil,nil,nil,'f3'].to_json
     @input_stream.rewind
 
     column_metadata = { columns: ['A', 'B', 'C', 'D', 'E', 'F'], empty_columns: [2, 4] }
