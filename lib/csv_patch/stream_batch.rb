@@ -8,7 +8,7 @@ class StreamBatch
   end
 
   def each
-    yield next_batch until stream_end?
+    yield next_batch, stream_end? until stream_end?
   end
 
   private
@@ -19,6 +19,12 @@ class StreamBatch
     batch.merge!(next_change) until batch_full?(batch)
 
     batch
+  end
+
+  def batch_type
+    return :last if stream_end?
+    return :first if @stream.pos == 0
+    :intermediate
   end
 
   def next_change
