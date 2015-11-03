@@ -4,24 +4,22 @@ module CsvPatch
 
   class Revision < Operation
 
-    EMPTY_LINE = "\n"
-
     def initialize changes, output_stream
       @output_stream  = output_stream
       @changes        = changes
 
-      header_line(EMPTY_LINE)
+      header_line([])
     end
 
     def header_line line
       return unless line
 
-      @columns = csv_values(line)
+      @columns = line
       mark_all_columns_empty
     end
 
     def replace_line line
-      emit replacement_line_for csv_values(line)
+      emit replacement_line_for(line)
     end
 
     def add_new_lines
