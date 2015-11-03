@@ -9,7 +9,7 @@ module CsvPatch
     TEMPFILE_NAME = 'csv_patch'
 
     def initialize options
-      @input, @output   = options[:input], options[:output]
+      @input, @output   = CSV.new(options[:input]), options[:output]
 
       @revision_result  = Tempfile.new(TEMPFILE_NAME)
       @revision         = Revision.new(options[:changes], @revision_result)

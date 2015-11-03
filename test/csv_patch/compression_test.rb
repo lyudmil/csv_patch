@@ -32,4 +32,18 @@ class CompressionTest < MiniTest::Unit::TestCase
     assert_equal true, @input_stream.eof?
   end
 
+  def test_handles_records_that_span_several_lines
+    @input_stream.puts ["a1\na1.1", 'b1', nil, 'd1'].to_json
+    @input_stream.rewind
+
+    @compression = CsvPatch::Compression.new(@input_stream, @output_stream, columns: ['A', 'B', 'C', 'D'], empty_columns: [2])
+
+    @compression.execute
+
+    @output_stream.rewind
+    assert_equal "A,B,D\n", @output_stream.gets
+    assert_equal "\"a1\n", @output_stream.gets
+    assert_equal "a1.1\",b1,d1\n", @output_stream.gets
+  end
+
 end

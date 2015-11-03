@@ -61,14 +61,16 @@ class CsvPatchTest < MiniTest::Unit::TestCase
     setup_changes_file_with @changes_repository
     CsvPatch.patch input: @input, output: @output, changes: @changes, batch_size: 2
 
-    assert_equal true, result_of_first_patch.closed?
-    assert_equal true, result_of_second_patch.closed?
-    assert_equal true, result_of_third_patch.closed?
+    assert_equal true, result_of_first_patch.closed?, 'Should close the result of the first patch'
+    assert_equal true, result_of_second_patch.closed?, 'Should close the result of the second patch'
+    assert_equal true, result_of_third_patch.closed?, 'Should close the result of the third patch'
+    assert_equal false, @input.closed?, 'Should not close the original input'
+    assert_equal false, @output.closed?, 'Should not close the original output'
   end
 
   def test_batch_size_defaults_to_500
     batch = mock('batch', each: nil)
-    StreamBatch.expects(:new).with(@changes, 500).returns(batch)
+    CsvPatch::StreamBatch.expects(:new).with(@changes, 500).returns(batch)
 
     CsvPatch.patch input: @input, output: @output, changes: @changes
   end
