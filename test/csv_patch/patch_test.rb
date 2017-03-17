@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class PatchTest < MiniTest::Unit::TestCase
+class PatchTest < Minitest::Test
 
   def setup
     @original = StringIO.new

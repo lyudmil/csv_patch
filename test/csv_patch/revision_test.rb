@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class RevisionTest < MiniTest::Unit::TestCase
+class RevisionTest < Minitest::Test
 
   def setup
     @changes = {
@@ -66,7 +66,7 @@ class RevisionTest < MiniTest::Unit::TestCase
     @revision.replace_line(['9', 'a', 'b', 'c', 'd', 'e'])
 
     @output_stream.rewind
-    assert_equal nil, @output_stream.gets
+    assert_nil @output_stream.gets
   end
 
   def test_can_generate_new_lines
