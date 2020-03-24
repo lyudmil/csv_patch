@@ -1,5 +1,5 @@
-require 'minitest/unit'
-require 'mocha/mini_test'
+require 'minitest/autorun'
+require 'mocha/minitest'
 require 'csv_patch'
 
-MiniTest::Unit.autorun
+MiniTest.autorun

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CompressionTest < MiniTest::Unit::TestCase
+class CompressionTest < Minitest::Test
 
   def setup
     @input_stream   = StringIO.new

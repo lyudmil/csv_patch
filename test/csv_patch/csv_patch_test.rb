@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CsvPatchTest < MiniTest::Unit::TestCase
+class CsvPatchTest < Minitest::Test
 
   def setup
     @input    = StringIO.new
