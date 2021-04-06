@@ -11,6 +11,7 @@ module CsvPatch
       @intermediate_files = []
       @input, @output     = options[:input], options[:output]
       @batches            = StreamBatch.new(options[:changes], options[:batch_size] || DEFAULT_BATCH_SIZE)
+      @id_column          = options[:id_column]
     end
 
     def execute
@@ -29,7 +30,12 @@ module CsvPatch
     end
 
     def patch_options batch
-      { input: input_for_next_patch, output: output_for_next_patch(batch), changes: batch.changes }
+      {
+        input: input_for_next_patch,
+        output: output_for_next_patch(batch),
+        changes: batch.changes,
+        id_column: @id_column
+      }
     end
 
     def close_intermediate_files

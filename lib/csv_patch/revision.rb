@@ -4,9 +4,10 @@ module CsvPatch
 
   class Revision < Operation
 
-    def initialize changes, output_stream
+    def initialize changes, output_stream, id_column = nil
       @output_stream  = output_stream
       @changes        = changes
+      @id_column      = id_column
 
       header_line([])
     end
@@ -14,7 +15,9 @@ module CsvPatch
     def header_line line
       return unless line
 
-      @columns = line
+      @columns          = line
+      @id_column_index  = @columns.find_index(@id_column)
+
       mark_all_columns_empty
     end
 
@@ -23,9 +26,13 @@ module CsvPatch
     end
 
     def add_new_lines
-      @changes.values.each do |addition|
-        emit generate_new_row(addition)
-      end
+      @changes
+        .values
+        .reject { |change| change.nil? }
+        .reject { |change| change[:applied] }
+        .each do |addition|
+          emit generate_new_row(addition)
+        end
     end
 
     def column_metadata
@@ -74,7 +81,11 @@ module CsvPatch
     end
 
     def change_for row
-      @changes.delete id_of(row)
+      change = @changes[id_of(row)]
+      return nil if change.nil?
+
+      change[:applied] = true
+      change.reject { |k, _| k == :applied }
     end
 
     def update_schema_to_reflect change
@@ -83,7 +94,8 @@ module CsvPatch
     end
 
     def id_of row
-      row.first
+      return row.first if @id_column_index.nil?
+      row[@id_column_index]
     end
 
   end
