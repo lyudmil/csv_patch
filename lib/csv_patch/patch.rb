@@ -12,7 +12,9 @@ module CsvPatch
       @input, @output   = CSV.new(options[:input]), options[:output]
 
       @revision_result  = Tempfile.new(TEMPFILE_NAME)
-      @revision         = Revision.new(options[:changes], @revision_result)
+      @revision         = Revision.new(
+        options[:changes], @revision_result, options[:id_column]
+      )
     end
 
     def apply
