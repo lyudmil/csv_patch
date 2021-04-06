@@ -25,7 +25,11 @@ class CsvPatchTest < Minitest::Test
   def test_processes_the_changes_file_in_a_single_batch_if_the_batch_size_is_greater_than_the_number_of_changes
     patch = mock('patch')
     patch.expects(:apply).with().once
-    CsvPatch::Patch.expects(:new).with(changes: batch_including(@changes_repository), input: @input, output: @output).once.returns(patch)
+    CsvPatch::Patch
+      .expects(:new)
+      .with(changes: batch_including(@changes_repository), input: @input, output: @output, id_column: nil)
+      .once
+      .returns(patch)
 
     setup_changes_file_with @changes_repository
     CsvPatch.patch(input: @input, output: @output, changes: @changes, batch_size: 7)
@@ -40,22 +44,22 @@ class CsvPatchTest < Minitest::Test
 
     first_patch.expects(:apply)
     CsvPatch::Patch.expects(:new)
-      .with(changes: batch_including(@changes_repository.slice(0, 2)), input: @input, output: result_of_first_patch)
+      .with(changes: batch_including(@changes_repository.slice(0, 2)), input: @input, output: result_of_first_patch, id_column: nil)
       .once.returns(first_patch)
 
     second_patch.expects(:apply)
     CsvPatch::Patch.expects(:new)
-      .with(changes: batch_including(@changes_repository.slice(2, 2)), input: result_of_first_patch, output: result_of_second_patch)
+      .with(changes: batch_including(@changes_repository.slice(2, 2)), input: result_of_first_patch, output: result_of_second_patch, id_column: nil)
       .once.returns(second_patch)
 
     third_patch.expects(:apply)
     CsvPatch::Patch.expects(:new)
-      .with(changes: batch_including(@changes_repository.slice(4, 2)), input: result_of_second_patch, output: result_of_third_patch)
+      .with(changes: batch_including(@changes_repository.slice(4, 2)), input: result_of_second_patch, output: result_of_third_patch, id_column: nil)
       .once.returns(third_patch)
 
     fourth_patch.expects(:apply)
     CsvPatch::Patch.expects(:new)
-      .with(changes: batch_including([@changes_repository.last]), input: result_of_third_patch, output: @output)
+      .with(changes: batch_including([@changes_repository.last]), input: result_of_third_patch, output: @output, id_column: nil)
       .once.returns(fourth_patch)
 
     setup_changes_file_with @changes_repository
